@@ -1,4 +1,9 @@
 import monggose from "mongoose";
+import moment from "moment-timezone";
+
+const timestamp = new Date();
+timestamp.setHours(timestamp.getHours() + 7);
+const today = moment.utc(timestamp).tz("Asia/Jakarta");
 
 const orderSchema = monggose.Schema(
     {
@@ -81,7 +86,9 @@ const orderSchema = monggose.Schema(
         },
     },
     {
-        timestamps: true,
+        timestamps: {
+            currentTime: () => today,
+        },
     }
 );
 

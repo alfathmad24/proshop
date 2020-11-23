@@ -6,14 +6,31 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import {
     productListReducer,
     productDetailsReducer,
+    productRemoveReducer,
+    productCreateReducer,
+    productUpdateReducer,
+    productAddReviewReducer,
+    productsTopRatedReducer,
 } from "./reducers/productReducers";
-import { cartReducer, initialState } from "./reducers/cartReducers";
+import { cartReducer } from "./reducers/cartReducers";
 import {
     userLoginReducers,
     userRegisterReducers,
     userDetailsReducers,
     userUpdateProfileReducer,
+    userListReducer,
+    userRemoveReducer,
+    userUpdateReducer,
 } from "./reducers/userReducers";
+
+import {
+    orderCreateReducer,
+    orderDetailsReducer,
+    orderPayReducer,
+    ordersUserReducer,
+    ordersListReducer,
+    orderDeliveredReducer,
+} from "./reducers/orderReducers";
 
 const reducer = combineReducers({
     productList: productListReducer,
@@ -22,7 +39,21 @@ const reducer = combineReducers({
     userLogin: userLoginReducers,
     userRegister: userRegisterReducers,
     userDetails: userDetailsReducers,
-    userUpdate: userUpdateProfileReducer,
+    userUpdateProfile: userUpdateProfileReducer,
+    orderCreate: orderCreateReducer,
+    orderDetails: orderDetailsReducer,
+    orderPay: orderPayReducer,
+    userOrders: ordersUserReducer,
+    usersList: userListReducer,
+    userRemove: userRemoveReducer,
+    userUpdate: userUpdateReducer,
+    productRemove: productRemoveReducer,
+    productCreate: productCreateReducer,
+    productUpdate: productUpdateReducer,
+    orderList: ordersListReducer,
+    orderDeliver: orderDeliveredReducer,
+    productReview: productAddReviewReducer,
+    productsTopRated: productsTopRatedReducer,
 });
 
 const cartItemsFromStorage = localStorage.getItem("cartItems")
@@ -33,11 +64,16 @@ const userInfoFromStorage = localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo"))
     : null;
 
+const shippingAddressFromStorage = localStorage.getItem("shippingAddress")
+    ? JSON.parse(localStorage.getItem("shippingAddress"))
+    : {};
+
 const cartState = {
     cart: {
         cartItems: cartItemsFromStorage,
-        success: initialState.success,
-        loadingAdded: initialState.loadingAdded,
+        // success: initialState.success,
+        // loadingAdded: initialState.loadingAdded,
+        shippingAddress: shippingAddressFromStorage,
     },
     userLogin: { userInfo: userInfoFromStorage },
 };

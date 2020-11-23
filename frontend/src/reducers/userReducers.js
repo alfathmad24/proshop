@@ -12,16 +12,33 @@ import {
     USER_UPDATE_SUCCESS,
     USER_UPDATE_FAIL,
     USER_UPDATE_REQUEST,
+    USER_DETAILS_RESET,
+    USER_LIST_REQUEST,
+    USER_LIST_SUCCESS,
+    USER_LIST_FAIL,
+    USER_LIST_RESET,
+    USER_DELETE_REQUEST,
+    USER_DELETE_SUCCESS,
+    USER_DELETE_FAIL,
+    USER_UPDATE_PROFILE_REQUEST,
+    USER_UPDATE_PROFILE_SUCCESS,
+    USER_UPDATE_PROFILE_FAIL,
+    USER_UPDATE_RESET,
+    USER_UPDATE_PROFILE_RESET,
 } from "../constants/userConstants";
 
 const loginState = {};
 
 const registerState = {};
 
-const updateUser = {};
+const updateUserProfile = {};
 
 const userState = {
     user: {},
+};
+
+const usersListState = {
+    users: [],
 };
 
 export const userLoginReducers = (state = loginState, action) => {
@@ -85,12 +102,89 @@ export const userDetailsReducers = (state = userState, action) => {
                 loading: false,
                 error: action.payload,
             };
+        case USER_DETAILS_RESET:
+            return {
+                user: {},
+            };
         default:
             return state;
     }
 };
 
-export const userUpdateProfileReducer = (state = updateUser, action) => {
+export const userUpdateProfileReducer = (state = updateUserProfile, action) => {
+    switch (action.type) {
+        case USER_UPDATE_PROFILE_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            };
+        case USER_UPDATE_PROFILE_SUCCESS:
+            return {
+                userInfo: action.payload,
+                success: true,
+                loading: false,
+            };
+        case USER_UPDATE_PROFILE_FAIL:
+            return {
+                loading: false,
+                error: action.payload,
+            };
+        case USER_UPDATE_PROFILE_RESET:
+            return {};
+        default:
+            return state;
+    }
+};
+
+export const userListReducer = (state = usersListState, action) => {
+    switch (action.type) {
+        case USER_LIST_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            };
+        case USER_LIST_SUCCESS:
+            return {
+                users: action.payload,
+                loading: false,
+            };
+        case USER_LIST_FAIL:
+            return {
+                loading: false,
+                error: action.payload,
+            };
+        case USER_LIST_RESET:
+            return {
+                users: [],
+            };
+        default:
+            return state;
+    }
+};
+
+export const userRemoveReducer = (state = {}, action) => {
+    switch (action.type) {
+        case USER_DELETE_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            };
+        case USER_DELETE_SUCCESS:
+            return {
+                loading: false,
+                success: true,
+            };
+        case USER_DELETE_FAIL:
+            return {
+                loading: false,
+                error: action.payload,
+            };
+        default:
+            return state;
+    }
+};
+
+export const userUpdateReducer = (state = { user: {} }, action) => {
     switch (action.type) {
         case USER_UPDATE_REQUEST:
             return {
@@ -99,7 +193,6 @@ export const userUpdateProfileReducer = (state = updateUser, action) => {
             };
         case USER_UPDATE_SUCCESS:
             return {
-                userInfo: action.payload,
                 success: true,
                 loading: false,
             };
@@ -107,6 +200,10 @@ export const userUpdateProfileReducer = (state = updateUser, action) => {
             return {
                 loading: false,
                 error: action.payload,
+            };
+        case USER_UPDATE_RESET:
+            return {
+                user: {},
             };
         default:
             return state;

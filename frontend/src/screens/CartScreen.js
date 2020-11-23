@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -9,42 +9,78 @@ import {
     Form,
     Button,
     Card,
+    Modal,
 } from "react-bootstrap";
 
-import Message from "../components/Message";
+// import Message from "../components/Message";
 import { removeFromCart, updatedCartItem } from "../actions/cartActions";
 
 const CartScreen = ({ match, location, history }) => {
-    const cart = useSelector((state) => state.cart);
-
-    const { cartItems } = cart;
-
-    // const productId = match.params.id;
-
-    // const qty = location.search ? Number(location.search.split("=")[1]) : 1;
-
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [deleteProduct, setDeleteProduct] = useState();
     const dispatch = useDispatch();
 
-    // useEffect(() => {
-    //     if (productId) {
-    //         dispatch(addToCart(productId, qty));
-    //     }
-    // }, [dispatch, productId, qty]);
+    const cart = useSelector((state) => state.cart);
+    const { cartItems } = cart;
 
-    const removeFromCartHandler = (id) => {
-        dispatch(removeFromCart(id));
+    const checkoutHandler = () => {
+        history.push("/login?redirect=shipping");
     };
 
-    const checkoutHandler = (id) => {
-        alert("checkout");
+    const showDeleteModalHandler = (id) => {
+        setDeleteModal(true);
+        setDeleteProduct(id);
+    };
+
+    const confirmDeleteHandler = () => {
+        dispatch(removeFromCart(deleteProduct));
+        setDeleteModal(false);
     };
 
     return (
         <>
+            {/* MODAL */}
+            <Modal
+                show={deleteModal}
+                onHide={() => setDeleteModal(false)}
+                size="sm"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+            >
+                <Modal.Header>
+                    <h4>Remove an item?</h4>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>This item will be removed from your cart.</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={() => setDeleteModal(false)}>
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="danger"
+                        onClick={() => confirmDeleteHandler()}
+                    >
+                        Remove Item
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* END MODAL */}
             {cartItems.length === 0 ? (
-                <Message>
-                    Your cart is empty <Link to="/">Go Back</Link>
-                </Message>
+                <Card
+                    className="text-center"
+                    style={{ width: "20rem", margin: "auto" }}
+                >
+                    <Card.Body>
+                        <Card.Title>Your cart is empty</Card.Title>
+                        <Card.Text>Make your dreams come true now!</Card.Text>
+                        {/* <Button variant="primary">Shop Now</Button> */}
+                        <Link className="btn btn-dark my-3" to="/">
+                            Shop Now
+                        </Link>
+                    </Card.Body>
+                </Card>
             ) : (
                 <Row>
                     <Col md={8}>
@@ -79,9 +115,7 @@ const CartScreen = ({ match, location, history }) => {
                                                     dispatch(
                                                         updatedCartItem(
                                                             item.product,
-                                                            Number(
-                                                                e.target.value
-                                                            )
+                                                            e.target.value
                                                         )
                                                     )
                                                 }
@@ -105,7 +139,7 @@ const CartScreen = ({ match, location, history }) => {
                                                 type="button"
                                                 variant="light"
                                                 onClick={() =>
-                                                    removeFromCartHandler(
+                                                    showDeleteModalHandler(
                                                         item.product
                                                     )
                                                 }
