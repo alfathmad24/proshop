@@ -21,6 +21,12 @@ import {
     ORDER_DELIVER_FAIL,
     ORDER_DETAILS_RESET,
     ORDER_CREATE_RESET,
+    ORDER_PAY_MIDTRANS_REQUEST,
+    ORDER_PAY_MIDTRANS_SUCCESS,
+    ORDER_PAY_MIDTRANS_FAIL,
+    ORDER_UPDATE_PAY_REQUEST,
+    ORDER_UPDATE_PAY_SUCCESS,
+    ORDER_UPDATE_PAY_FAIL,
 } from "../constants/orderConstants";
 import {
     USER_LIST_FAIL,
@@ -240,6 +246,85 @@ export const deliverOrder = (orderId) => async (dispatch, getState) => {
     } catch (error) {
         dispatch({
             type: ORDER_DELIVER_FAIL,
+            payload:
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message,
+        });
+    }
+};
+
+export const payOrderMidtrans = (orderId) => async (dispatch, getState) => {
+    try {
+        dispatch({
+            type: ORDER_PAY_MIDTRANS_REQUEST,
+        });
+
+        const {
+            userLogin: { userInfo },
+        } = getState();
+
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
+
+        const { data } = await axios.post(
+            `/api/orders/${orderId}/paymidtrans`,
+            {},
+            config
+        );
+
+        dispatch({
+            type: ORDER_PAY_MIDTRANS_SUCCESS,
+            payload: data,
+        });
+    } catch (error) {
+        dispatch({
+            type: ORDER_PAY_MIDTRANS_FAIL,
+            payload:
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message,
+        });
+    }
+};
+
+export const updatePayOrderMidtrans = (orderId, result) => async (
+    dispatch,
+    getState
+) => {
+    try {
+        dispatch({
+            type: ORDER_UPDATE_PAY_REQUEST,
+        });
+
+        const {
+            userLogin: { userInfo },
+        } = getState();
+
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${userInfo.token}`,
+            },
+        };
+
+        const { data } = await axios.put(
+            `/api/orders/${orderId}/updatepay`,
+            result,
+            config
+        );
+
+        dispatch({
+            type: ORDER_UPDATE_PAY_SUCCESS,
+            payload: data,
+        });
+    } catch (error) {
+        dispatch({
+            type: ORDER_UPDATE_PAY_FAIL,
             payload:
                 error.response && error.response.data.message
                     ? error.response.data.message

@@ -22,6 +22,14 @@ import {
     ORDER_DELIVER_RESET,
     ORDER_DETAILS_RESET,
     ORDER_CREATE_RESET,
+    ORDER_PAY_MIDTRANS_REQUEST,
+    ORDER_PAY_MIDTRANS_SUCCESS,
+    ORDER_PAY_MIDTRANS_FAIL,
+    ORDER_PAY_MIDTRANS_RESET,
+    ORDER_UPDATE_PAY_REQUEST,
+    ORDER_UPDATE_PAY_SUCCESS,
+    ORDER_UPDATE_PAY_FAIL,
+    ORDER_UPDATE_PAY_RESET,
 } from "../constants/orderConstants";
 import {
     USER_LIST_FAIL,
@@ -175,6 +183,54 @@ export const orderDeliveredReducer = (state = {}, action) => {
                 error: action.payload,
             };
         case ORDER_DELIVER_RESET:
+            return {};
+        default:
+            return state;
+    }
+};
+
+export const orderPayMidtransReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ORDER_PAY_MIDTRANS_REQUEST:
+            return {
+                loading: true,
+            };
+        case ORDER_PAY_MIDTRANS_SUCCESS:
+            return {
+                loading: false,
+                order: action.payload,
+                success: true,
+            };
+        case ORDER_PAY_MIDTRANS_FAIL:
+            return {
+                loading: false,
+                error: action.payload,
+            };
+        case ORDER_PAY_MIDTRANS_RESET:
+            return {};
+        default:
+            return state;
+    }
+};
+
+export const updateOrderPayMidtransReducer = (state = {}, action) => {
+    switch (action.type) {
+        case ORDER_UPDATE_PAY_REQUEST:
+            return {
+                loading: true,
+            };
+        case ORDER_UPDATE_PAY_SUCCESS:
+            return {
+                loading: false,
+                order: action.payload,
+                success: true,
+            };
+        case ORDER_UPDATE_PAY_FAIL:
+            return {
+                loading: false,
+                error: action.payload,
+            };
+        case ORDER_UPDATE_PAY_RESET:
             return {};
         default:
             return state;

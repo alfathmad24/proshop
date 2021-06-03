@@ -10,97 +10,93 @@ import Loader from "../components/Loader";
 import { getOrderList } from "../actions/orderActions";
 
 const OrderListScreen = ({ history }) => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-    const userLogin = useSelector((state) => state.userLogin);
-    const { userInfo } = userLogin;
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
-    const orderList = useSelector((state) => state.orderList);
-    const { loading: loadingOrders, error: errorOrders, orders } = orderList;
+  const orderList = useSelector((state) => state.orderList);
+  const { loading: loadingOrders, error: errorOrders, orders } = orderList;
 
-    useEffect(() => {
-        if (!userInfo || !userInfo.isAdmin) {
-            return history.push("/login");
-        }
+  useEffect(() => {
+    if (!userInfo || !userInfo.isAdmin) {
+      return history.push("/login");
+    }
 
-        dispatch(getOrderList());
-    }, [dispatch, history, userInfo]);
+    dispatch(getOrderList());
+  }, [dispatch, history, userInfo]);
 
+  function convertToRupiah(angka) {
+    var rupiah = "";
+    var angkarev = angka.toString().split("").reverse().join("");
+    for (var i = 0; i < angkarev.length; i++)
+      if (i % 3 === 0) rupiah += angkarev.substr(i, 3) + ".";
     return (
-        <Row>
-            <Col>
-                <h2>ALL Orders</h2>
-                {loadingOrders ? (
-                    <Loader />
-                ) : errorOrders ? (
-                    <Message variant="danger">{errorOrders}</Message>
-                ) : (
-                    <Table
-                        striped
-                        bordered
-                        hover
-                        responsive
-                        className="table-sm"
-                    >
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>USER</th>
-                                <th>DATE</th>
-                                <th>TOTAL</th>
-                                <th>PAID</th>
-                                <th>DELIVERED</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {orders.map((order) => (
-                                <tr key={order._id}>
-                                    <td>{order._id}</td>
-                                    <td>{order.user.name}</td>
-                                    <td>{order.createdAt.substring(0, 10)}</td>
-                                    <td>${order.totalPrice}</td>
-                                    <td>
-                                        {order.isPaid ? (
-                                            order.paidAt.substring(0, 10)
-                                        ) : (
-                                            <i
-                                                className="fas fa-times"
-                                                style={{ color: "red" }}
-                                            ></i>
-                                        )}
-                                    </td>
-                                    <td>
-                                        {order.isDelivered ? (
-                                            order.deliveredAt.substring(0, 10)
-                                        ) : (
-                                            <i
-                                                className="fas fa-times"
-                                                style={{ color: "red" }}
-                                            ></i>
-                                        )}
-                                    </td>
-                                    <td>
-                                        <LinkContainer
-                                            to={`/order/${order._id}`}
-                                        >
-                                            <Button
-                                                className="btn"
-                                                variant="light"
-                                                size="sm"
-                                            >
-                                                Details
-                                            </Button>
-                                        </LinkContainer>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                )}
-            </Col>
-        </Row>
+      "Rp " +
+      rupiah
+        .split("", rupiah.length - 1)
+        .reverse()
+        .join("")
     );
+  }
+
+  return (
+    <Row>
+      <Col>
+        <h2>ALL Orders</h2>
+        {loadingOrders ? (
+          <Loader />
+        ) : errorOrders ? (
+          <Message variant="danger">{errorOrders}</Message>
+        ) : (
+          <Table striped bordered hover responsive className="table-sm">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>USER</th>
+                <th>DATE</th>
+                <th>TOTAL</th>
+                <th>PAID</th>
+                <th>DELIVERED</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order._id}>
+                  <td>{order._id}</td>
+                  <td>{order.user.name}</td>
+                  <td>{order.createdAt.substring(0, 10)}</td>
+                  <td>{convertToRupiah(order.totalPrice)}</td>
+                  <td>
+                    {order.isPaid ? (
+                      order.paidAt.substring(0, 10)
+                    ) : (
+                      <i className="fas fa-times" style={{ color: "red" }}></i>
+                    )}
+                  </td>
+                  <td>
+                    {order.isDelivered ? (
+                      order.deliveredAt.substring(0, 10)
+                    ) : (
+                      <i className="fas fa-times" style={{ color: "red" }}></i>
+                    )}
+                  </td>
+                  <td>
+                    <LinkContainer to={`/order/${order._id}`}>
+                      <Button className="btn" variant="light" size="sm">
+                        Details
+                      </Button>
+                    </LinkContainer>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </Col>
+    </Row>
+  );
 };
 
 export default OrderListScreen;
